@@ -1,0 +1,20 @@
+{
+  "name": "mongodb_atlas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mongodb": "*",
+    "helmet": "*",
+    "express": "*",
+    "express-handlebars": "*",
+    "express-messages": "*",
+    "express-session": "*",
+    "express-validator": "*"
+  },
+  "author": "",
+  "license": "ISC"
+}
