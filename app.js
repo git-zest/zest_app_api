@@ -121,6 +121,7 @@ app.get('/eventretriveformap', function(req,res,next){
                     }
                     //responsetomap=[responsetomap
                     console.log(responsetomap.toString());
+                    res.send(responsetomap.toString())
                     client.close();
             });
   });
