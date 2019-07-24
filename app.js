@@ -5,7 +5,7 @@ const bodyparser = require('body-parser');
 mobileregistration=require('./functions/mobileregistration');
 eventupdater=require('./functions/eventupdater');
 const MongoClient = require('mongodb').MongoClient;
-//var natural=require('natural');
+var natural=require('natural');
 var app=express();
 app.use(helmet());
 app.disable('x-powered-by');
@@ -15,7 +15,7 @@ app.use(session({
 }));
 app.use(bodyparser.json());
 var response;
-//var wordnet=new natural.WordNet();
+var wordnet=new natural.WordNet();
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,9 +26,9 @@ app.get('/sessionvl/:emailid',function(req,res){
   var str_emailid=req.params.emailid;
   var mobileregs=mobileregistration.mobileregister(str_emailid,function(model){
       if(model==='success'){
-
-      }else if(model==='success'){
-
+        req.session.user=str_emailid;
+      }else if(model==='Already added'){
+        req.session.user=str_emailid;
       }
       res.send(model);
   });
@@ -38,9 +38,9 @@ app.get('/sessionvl/:emailid',function(req,res){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-app.get('/selectionscreencheck/:emailid',function(req,res){
+app.get('/selectionscreencheck',function(req,res){
   var str_emailid=req.params.emailid;
-  var mobileregs=eventupdater.selectioncheck(str_emailid,function(model){
+  var mobileregs=eventupdater.selectioncheck(req.session.user,function(model){
       res.send(model);
   });
 });
@@ -59,7 +59,7 @@ app.get('/selectionscreenadd/:emailid/:eventsname',function(req,res){
   str_eventnumber[0]=str_events
   str_eventnumber[1]=""
   }
-  var mobileregs=eventupdater.selectionadd(str_emailid,str_eventnumber[0],str_eventnumber[1],function(model){
+  var mobileregs=eventupdater.selectionadd(req.session.user,str_eventnumber[0],str_eventnumber[1],function(model){
       res.send(model);
   });
 });
@@ -85,6 +85,21 @@ app.get('/watchinfo/:mobilemodel/:mobilename/:wishlist',function(req,res){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+app.get('/ntlanguage/:word',function(req,res){
+  var str_words=req.params.word;
+  wordnet.lookup(str_words,function(results){
+    results.forEach(function(result){
+      console.log(result.synonyms.length);
+      console.log(result.lemma);
+      console.log(result.pos);
+      console.log(result.gloss);
+      //res.send(result.synonyms);
+      result.exp.forEach(function(example){
+        console.log(example);
+      });
+    });
+  });
+});
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,10 +136,44 @@ app.get('/eventretriveformap', function(req,res,next){
                     }
                     //responsetomap=[responsetomap
                     console.log(responsetomap.toString());
-                    res.send(responsetomap.toString())
+                    res.send(responsetomap.toString());
                     client.close();
             });
   });
 });
-app.listen(3000);
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+app.get('/eventbasedonlocation/:latitude/:longitude', function(req,res,next){
+  var str_latitude=req.params.latitude;
+  var str_latitude=req.params.latitude;
+  var NodeGeocoder = require('node-geocoder');
+  var options = {
+        provider: 'google',
+        httpAdapter: 'https', // Default
+        apiKey: 'AIzaSyDOi_pjM1gj0jNzJxQWET8oH-S0U6J2PP4', // for Mapquest, OpenCage, Google Premier
+        formatter: null         // 'gpx', 'string', ...
+      };
+var geocoder = NodeGeocoder(options);
+// Using callback
+geocoder.reverse({lat:str_latitude, lon:str_latitude}, function(err, res) {
+  //console.log(res);
+  console.log(res[0].city);
+  const urlevents = 'mongodb+srv://zestapp:ammu@cluster0-jb1oc.mongodb.net/';
+  MongoClient.connect(urlevents,function (err,client) {
+            var dbo = client.db("zest_app_events");
+            var query={region_name:{_text:res[0].city}}
+            dbo.collection("db_zest_app_events").find(query,{title:{_text:0}}).toArray(function(err, result) {
+              for(var rs in result){
+                console.log(rs);
+              }
+            });
+  });
+});
+});
+
+
+app.listen(9013);
 console.log('server started');
