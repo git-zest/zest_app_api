@@ -7,13 +7,21 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "mongodb": "*",
-    "helmet": "*",
+    "request": "*",
     "express": "*",
-    "express-handlebars": "*",
-    "express-messages": "*",
-    "express-session": "*",
-    "express-validator": "*"
+    "helmet": "*",
+    "express-session": "^1.16.2",
+    "body-parser": "*",
+    "mongodb": "*",
+    "bcrypt": "*",
+    "mongoose": "*",
+    "bluebird": "*",
+    "node-schedule": "*",
+    "natural": "*",
+    "wordnet-db": "*",
+    "node-eventbrite": "*",
+    "@tensorflow/tfjs": "*",
+    "@google/maps": "*"
   },
   "author": "",
   "license": "ISC"
