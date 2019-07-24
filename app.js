@@ -5,7 +5,7 @@ const bodyparser = require('body-parser');
 mobileregistration=require('./functions/mobileregistration');
 eventupdater=require('./functions/eventupdater');
 const MongoClient = require('mongodb').MongoClient;
-var natural=require('natural');
+//var natural=require('natural');
 var app=express();
 app.use(helmet());
 app.disable('x-powered-by');
@@ -15,7 +15,7 @@ app.use(session({
 }));
 app.use(bodyparser.json());
 var response;
-var wordnet=new natural.WordNet();
+//var wordnet=new natural.WordNet();
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -166,9 +166,7 @@ geocoder.reverse({lat:str_latitude, lon:str_latitude}, function(err, res) {
             var dbo = client.db("zest_app_events");
             var query={region_name:{_text:res[0].city}}
             dbo.collection("db_zest_app_events").find(query,{title:{_text:0}}).toArray(function(err, result) {
-              for(var rs in result){
-                console.log(rs);
-              }
+              console.log(result);
             });
   });
 });
