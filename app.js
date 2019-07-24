@@ -5,7 +5,7 @@ const bodyparser = require('body-parser');
 mobileregistration=require('./functions/mobileregistration');
 eventupdater=require('./functions/eventupdater');
 const MongoClient = require('mongodb').MongoClient;
-var natural=require('natural');
+//var natural=require('natural');
 var app=express();
 app.use(helmet());
 app.disable('x-powered-by');
@@ -85,21 +85,6 @@ app.get('/watchinfo/:mobilemodel/:mobilename/:wishlist',function(req,res){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-app.get('/ntlanguage/:word',function(req,res){
-  var str_words=req.params.word;
-  wordnet.lookup(str_words,function(results){
-    results.forEach(function(result){
-      console.log(result.synonyms.length);
-      console.log(result.lemma);
-      console.log(result.pos);
-      console.log(result.gloss);
-      //res.send(result.synonyms);
-      result.exp.forEach(function(example){
-        console.log(example);
-      });
-    });
-  });
-});
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
