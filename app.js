@@ -51,7 +51,7 @@ app.get('/selectionscreencheck',function(req,res){
 ////////////////////////////////////////////////////////////////////////////////
 app.get('/selectionscreenadd/:emailid/:eventsname',function(req,res){
 
-  var str_emailid=req.params.emailid;
+  var str_emailid=req.session.user;
   var str_events=req.params.eventsname;
   if(str_events.split("-")){
   var str_eventnumber=str_events.split("-");
@@ -59,7 +59,7 @@ app.get('/selectionscreenadd/:emailid/:eventsname',function(req,res){
   str_eventnumber[0]=str_events
   str_eventnumber[1]=""
   }
-  var mobileregs=eventupdater.selectionadd(req.session.user,str_eventnumber[0],str_eventnumber[1],function(model){
+  var mobileregs=eventupdater.selectionadd(str_emailid,str_eventnumber[0],str_eventnumber[1],function(model){
       res.send(model);
   });
 });
@@ -148,7 +148,7 @@ app.get('/eventretriveformap', function(req,res,next){
 ////////////////////////////////////////////////////////////////////////////////
 app.get('/eventbasedonlocation/:latitude/:longitude', function(req,res,next){
   var str_latitude=req.params.latitude;
-  var str_latitude=req.params.latitude;
+  var str_longitude=req.params.longitude;
   var NodeGeocoder = require('node-geocoder');
   var options = {
         provider: 'google',
@@ -158,14 +158,14 @@ app.get('/eventbasedonlocation/:latitude/:longitude', function(req,res,next){
       };
 var geocoder = NodeGeocoder(options);
 // Using callback
-geocoder.reverse({lat:str_latitude, lon:str_latitude}, function(err, res) {
+geocoder.reverse({lat:str_latitude, lon:str_longitude}, function(err, res) {
   //console.log(res);
-  console.log(res[0].city);
+  console.log(res);
   const urlevents = 'mongodb+srv://zestapp:ammu@cluster0-jb1oc.mongodb.net/';
   MongoClient.connect(urlevents,function (err,client) {
             var dbo = client.db("zest_app_events");
-            var query={region_name:{_text:res[0].city}}
-            dbo.collection("db_zest_app_events").find(query,{title:{_text:0}}).toArray(function(err, result) {
+            var query={region_name:{_text:res[0].administrativeLevels.level1long}}
+            dbo.collection("db_zest_app_events").find(query).toArray(function(err, result) {
               console.log(result);
             });
   });
@@ -173,5 +173,5 @@ geocoder.reverse({lat:str_latitude, lon:str_latitude}, function(err, res) {
 });
 
 
-app.listen(9013);
+app.listen(3000);
 console.log('server started');
