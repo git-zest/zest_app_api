@@ -38,9 +38,9 @@ app.get('/sessionvl/:emailid',function(req,res){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-app.get('/selectionscreencheck',function(req,res){
-  //var str_emailid=req.params.emailid;
-  var mobileregs=eventupdater.selectioncheck(req.session.user,function(model){
+app.get('/selectionscreencheck/:emailid',function(req,res){
+  var str_emailid=req.params.emailid;
+  var mobileregs=eventupdater.selectioncheck(str_emailid,function(model){
       res.send(model);
   });
 });
@@ -51,7 +51,7 @@ app.get('/selectionscreencheck',function(req,res){
 ////////////////////////////////////////////////////////////////////////////////
 app.get('/selectionscreenadd/:emailid/:eventsname',function(req,res){
 
-  var str_emailid=req.session.user;
+  var str_emailid=req.params.emailid;
   var str_events=req.params.eventsname;
   if(str_events.split("-")){
   var str_eventnumber=str_events.split("-");
