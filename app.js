@@ -39,7 +39,7 @@ app.get('/sessionvl/:emailid',function(req,res){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 app.get('/selectionscreencheck',function(req,res){
-  var str_emailid=req.params.emailid;
+  //var str_emailid=req.params.emailid;
   var mobileregs=eventupdater.selectioncheck(req.session.user,function(model){
       res.send(model);
   });
