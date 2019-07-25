@@ -21,7 +21,8 @@
     "wordnet-db": "*",
     "node-eventbrite": "*",
     "@tensorflow/tfjs": "*",
-    "@google/maps": "*"
+    "@google/maps": "*",
+    "node-geocoder": "*"
   },
   "author": "",
   "license": "ISC"

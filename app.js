@@ -135,9 +135,9 @@ app.get('/eventretriveformap', function(req,res,next){
                       }
                     }
                     //responsetomap=[responsetomap
+                    client.close();
                     console.log(responsetomap[1].toString());
                     res.send(responsetomap.toString());
-                    client.close();
             });
   });
 });
@@ -158,15 +158,33 @@ app.get('/eventbasedonlocation/:latitude/:longitude', function(req,res,next){
       };
 var geocoder = NodeGeocoder(options);
 // Using callback
-geocoder.reverse({lat:str_latitude, lon:str_longitude}, function(err, res) {
+geocoder.reverse({lat:str_latitude, lon:str_longitude}, function(err, res1) {
   //console.log(res);
-  console.log(res);
+  console.log(res1);
   const urlevents = 'mongodb+srv://zestapp:ammu@cluster0-jb1oc.mongodb.net/';
   MongoClient.connect(urlevents,function (err,client) {
             var dbo = client.db("zest_app_events");
-            var query={region_name:{_text:res[0].administrativeLevels.level1long}}
+            var query={}
             dbo.collection("db_zest_app_events").find(query).toArray(function(err, result) {
-              console.log(result);
+              var responsetomap;
+              for(var rs in result){
+                str_title=result[rs].title._text;
+                str_latitude=result[rs].latitude._text;
+                //str_longitude=result[rs].str_longitude._text;
+                str_starttime=result[rs].start_time._text;
+                str_venue=result[rs].venue_name._text;
+                str_venueaddress=result[rs].venue_address._text;
+                if(rs==0){
+                  responsetomap={title:str_title,latitude:str_latitude,longitude:str_longitude,starttime:str_starttime,venue:str_venue,venueaddress:str_venueaddress}
+                }else{
+                  responsetomap=responsetomap+{title:str_title,latitude:str_latitude,longitude:str_longitude,starttime:str_starttime,venue:str_venue,venueaddress:str_venueaddress}
+                }
+                if(rs==5){
+                  client.close();
+                  console.log([responsetomap]);
+                  res.send(responsetomap)
+                }
+              }
             });
   });
 });
